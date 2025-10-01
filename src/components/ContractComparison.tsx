@@ -215,7 +215,7 @@ export default function ContractComparison() {
 
           {comparisonView === 'side-by-side' ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {comparedContracts.map((contract, index) => (
+              {comparedContracts.map((contract) => (
                 <div key={contract.id} className="space-y-4">
                   <h3 className="font-semibold text-gray-900 text-lg border-b pb-2">
                     {contract.name}
@@ -236,17 +236,17 @@ export default function ContractComparison() {
           ) : (
             <div className="space-y-4">
               {/* Unified view - show all unique clauses */}
-              {Array.from(new Set(comparedContracts.flatMap(c => c.clauses.map(cl => cl.title)))).map(title => {
+              {Array.from(new Set(comparedContracts.flatMap(c => c.clauses.map(cl => cl.title)))).map((title, titleIndex) => {
                 const clausesForTitle = comparedContracts.map(contract =>
                   contract.clauses.find(clause => clause.title === title)
                 ).filter(Boolean);
 
                 return (
-                  <div key={title} className="border border-gray-200 rounded-lg p-4">
+                  <div key={`${title}-${titleIndex}`} className="border border-gray-200 rounded-lg p-4">
                     <h4 className="font-medium text-gray-900 mb-4">{title}</h4>
                     <div className="space-y-3">
-                      {clausesForTitle.map((clause, index) => (
-                        <div key={`${clause?.id}-${index}`} className={`p-3 rounded ${getDifferenceColor(clause?.differences || 'same')}`}>
+                      {clausesForTitle.map((clause, clauseIndex) => (
+                        <div key={`${clause?.id}-${clauseIndex}`} className={`p-3 rounded ${getDifferenceColor(clause?.differences || 'same')}`}>
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-sm font-medium text-gray-700">
                               {comparedContracts.find(c => c.clauses.some(cl => cl.id === clause?.id))?.name}

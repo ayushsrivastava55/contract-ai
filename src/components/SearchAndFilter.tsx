@@ -401,9 +401,9 @@ export default function SearchAndFilter() {
         <div className="bg-blue-50 rounded-lg p-6">
           <h3 className="font-medium text-blue-900 mb-3">Search Tips</h3>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Use specific terms like "payment terms", "force majeure", or "arbitration"</li>
-            <li>• Search for monetary amounts like "penalty" or "liquidated damages"</li>
-            <li>• Look for time-based clauses with terms like "30 days" or "quarterly"</li>
+            <li>• Use specific terms like &ldquo;payment terms&rdquo;, &ldquo;force majeure&rdquo;, or &ldquo;arbitration&rdquo;</li>
+            <li>• Search for monetary amounts like &ldquo;penalty&rdquo; or &ldquo;liquidated damages&rdquo;</li>
+            <li>• Look for time-based clauses with terms like &ldquo;30 days&rdquo; or &ldquo;quarterly&rdquo;</li>
             <li>• Use filters to narrow down results by contract type or risk level</li>
             <li>• Search results show relevance scores to help you find the most applicable clauses</li>
           </ul>

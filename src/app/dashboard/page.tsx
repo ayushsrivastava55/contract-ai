@@ -9,13 +9,14 @@ import RiskScoringEngine from '../../components/RiskScoringEngine';
 
 type UserRole = 'legal' | 'finance' | 'operations' | 'management';
 
-interface DashboardWidget {
-  id: string;
-  title: string;
-  component: string;
-  roles: UserRole[];
-  priority: number;
-}
+// Interface for future dashboard widget configuration
+// interface DashboardWidget {
+//   id: string;
+//   title: string;
+//   component: string;
+//   roles: UserRole[];
+//   priority: number;
+// }
 
 export default function Dashboard() {
   const [activeRole, setActiveRole] = useState<UserRole>('management');
@@ -28,20 +29,22 @@ export default function Dashboard() {
     { id: 'management' as UserRole, name: 'Management/Board', icon: '📊', color: 'purple' }
   ];
 
-  const widgets: DashboardWidget[] = [
-    { id: 'contracts', title: 'Contract Explorer', component: 'explorer', roles: ['legal', 'finance', 'operations', 'management'], priority: 1 },
-    { id: 'comparison', title: 'Contract Comparison', component: 'comparison', roles: ['legal', 'finance', 'operations'], priority: 2 },
-    { id: 'risk-overview', title: 'Risk Overview', component: 'risk', roles: ['management', 'finance'], priority: 1 },
-    { id: 'compliance', title: 'Compliance Dashboard', component: 'compliance', roles: ['legal'], priority: 1 },
-    { id: 'financials', title: 'Financial Overview', component: 'financials', roles: ['finance'], priority: 1 },
-    { id: 'operations', title: 'Project Timeline', component: 'timeline', roles: ['operations'], priority: 1 }
-  ];
+  // Widget configuration for future dashboard customization
+  // const widgets: DashboardWidget[] = [
+  //   { id: 'contracts', title: 'Contract Explorer', component: 'explorer', roles: ['legal', 'finance', 'operations', 'management'], priority: 1 },
+  //   { id: 'comparison', title: 'Contract Comparison', component: 'comparison', roles: ['legal', 'finance', 'operations'], priority: 2 },
+  //   { id: 'risk-overview', title: 'Risk Overview', component: 'risk', roles: ['management', 'finance'], priority: 1 },
+  //   { id: 'compliance', title: 'Compliance Dashboard', component: 'compliance', roles: ['legal'], priority: 1 },
+  //   { id: 'financials', title: 'Financial Overview', component: 'financials', roles: ['finance'], priority: 1 },
+  //   { id: 'operations', title: 'Project Timeline', component: 'timeline', roles: ['operations'], priority: 1 }
+  // ];
 
-  const getRoleWidgets = (role: UserRole) => {
-    return widgets
-      .filter(widget => widget.roles.includes(role))
-      .sort((a, b) => a.priority - b.priority);
-  };
+  // Helper function for future use - getting widgets for specific roles
+  // const getRoleWidgets = (role: UserRole) => {
+  //   return widgets
+  //     .filter(widget => widget.roles.includes(role))
+  //     .sort((a, b) => a.priority - b.priority);
+  // };
 
   const renderRoleSpecificContent = () => {
     switch (activeRole) {
@@ -421,6 +424,9 @@ export default function Dashboard() {
 
         {activeView === 'explorer' && <ContractExplorer />}
         {activeView === 'comparison' && <ContractComparison />}
+        {activeView === 'search' && <SearchAndFilter />}
+        {activeView === 'alerts' && <AlertsSystem />}
+        {activeView === 'risk' && <RiskScoringEngine />}
       </div>
     </div>
   );
