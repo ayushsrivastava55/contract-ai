@@ -1,103 +1,262 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [activeFeature, setActiveFeature] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const businessImpacts = [
+    {
+      id: 'insights',
+      icon: '🔍',
+      title: 'Generate multiple insights and answers at once',
+      description: 'AI-powered analysis of contract terms, obligations, and risks'
+    },
+    {
+      id: 'risk',
+      icon: '⚠️',
+      title: 'Immediately identify and prioritize contract risk',
+      description: 'Real-time risk assessment with severity scoring'
+    },
+    {
+      id: 'terms',
+      icon: '📄',
+      title: 'Expose specific terms, language and phrases',
+      description: 'Advanced search and extraction of contract clauses'
+    },
+    {
+      id: 'alerts',
+      icon: '🔔',
+      title: 'Manage time-based contract events with smart alerts',
+      description: 'Automated notifications for deadlines and milestones'
+    }
+  ];
+
+  const features = [
+    {
+      id: 'explorer',
+      title: 'Contract Explorer',
+      description: 'Your contract landscape in one place with full visibility',
+      icon: '📊'
+    },
+    {
+      id: 'comparison',
+      title: 'Contract Comparison',
+      description: 'Compare and contrast contracts',
+      icon: '⚖️'
+    },
+    {
+      id: 'search',
+      title: 'Search and Filter',
+      description: 'Access relevant contract information with high accuracy',
+      icon: '🔍'
+    },
+    {
+      id: 'dashboard',
+      title: 'Dashboard',
+      description: 'Customizable user friendly interface',
+      icon: '📈'
+    },
+    {
+      id: 'alerts',
+      title: 'Alerts',
+      description: 'Real time, standard and custom contract alerts (auto renewals, end dates, etc.)',
+      icon: '🚨'
+    },
+    {
+      id: 'risk-engine',
+      title: 'Risk Scoring Engine',
+      description: 'View and understand risks enabling proactive management',
+      icon: '🎯'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">📋</span>
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Contract<span className="text-yellow-500">AI</span>
+              </h1>
+            </div>
+            <nav className="flex space-x-6">
+              <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                Dashboard
+              </button>
+              <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                Contracts
+              </button>
+              <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                Analytics
+              </button>
+            </nav>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </header>
+
+      {/* Hero Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Accelerate Contract Performance And Value Realization
+          </h2>
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            AI-powered contract analysis platform for large infrastructure projects.
+            Parse complex contracts, manage risks, and track performance across legal, operational, and financial domains.
+          </p>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Business Impact Section */}
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Business Impact</h3>
+            <div className="space-y-6">
+              {businessImpacts.map((impact) => (
+                <div key={impact.id} className="flex items-start space-x-4 p-4 rounded-lg hover:bg-yellow-50 transition-colors">
+                  <div className="flex-shrink-0 w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-xl">
+                    {impact.icon}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">{impact.title}</h4>
+                    <p className="text-gray-600 text-sm">{impact.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Features Grid */}
+          <div className="space-y-6">
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">Core Features</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {features.map((feature) => (
+                <div
+                  key={feature.id}
+                  className={`bg-white rounded-lg shadow-md p-6 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 ${
+                    activeFeature === feature.id ? 'ring-2 ring-yellow-500 bg-yellow-50' : ''
+                  }`}
+                  onClick={() => setActiveFeature(activeFeature === feature.id ? null : feature.id)}
+                >
+                  <div className="text-center">
+                    <div className="text-3xl mb-3">{feature.icon}</div>
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">{feature.title}</h4>
+                    <p className="text-gray-600 text-xs">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Feature Details */}
+            {activeFeature && (
+              <div className="bg-white rounded-lg shadow-lg p-6 mt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    {features.find(f => f.id === activeFeature)?.title}
+                  </h4>
+                  <button
+                    onClick={() => setActiveFeature(null)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {activeFeature === 'explorer' && (
+                    <div>
+                      <p className="text-gray-600 mb-4">Upload and analyze your contracts with AI-powered parsing.</p>
+                      <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                        Upload Contract
+                      </button>
+                    </div>
+                  )}
+                  {activeFeature === 'comparison' && (
+                    <div>
+                      <p className="text-gray-600 mb-4">Side-by-side contract comparison with difference highlighting.</p>
+                      <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                        Compare Contracts
+                      </button>
+                    </div>
+                  )}
+                  {activeFeature === 'search' && (
+                    <div>
+                      <p className="text-gray-600 mb-4">Advanced search across all contract documents and clauses.</p>
+                      <input
+                        type="text"
+                        placeholder="Search contracts..."
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      />
+                    </div>
+                  )}
+                  {activeFeature === 'dashboard' && (
+                    <div>
+                      <p className="text-gray-600 mb-4">Customizable dashboards for different stakeholder views.</p>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="bg-gray-100 p-2 rounded">Legal Team View</div>
+                        <div className="bg-gray-100 p-2 rounded">Finance View</div>
+                        <div className="bg-gray-100 p-2 rounded">Operations View</div>
+                        <div className="bg-gray-100 p-2 rounded">Executive View</div>
+                      </div>
+                    </div>
+                  )}
+                  {activeFeature === 'alerts' && (
+                    <div>
+                      <p className="text-gray-600 mb-4">Real-time notifications for contract events and deadlines.</p>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 text-sm">
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                          <span>Contract renewal in 30 days</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm">
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                          <span>Payment milestone approaching</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {activeFeature === 'risk-engine' && (
+                    <div>
+                      <p className="text-gray-600 mb-4">AI-powered risk assessment and scoring for proactive management.</p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">Overall Risk Score</span>
+                          <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Medium</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-yellow-500 h-2 rounded-full w-3/5"></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl shadow-lg p-8 mt-12 text-center text-white">
+          <h3 className="text-2xl font-bold mb-4">Ready to Transform Your Contract Management?</h3>
+          <p className="text-lg mb-6 opacity-90">
+            Join leading infrastructure companies in India using AI to accelerate contract performance
+          </p>
+          <div className="space-x-4">
+            <button className="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              Get Started
+            </button>
+            <button className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-yellow-600 transition-colors">
+              Request Demo
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
