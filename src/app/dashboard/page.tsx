@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ContractExplorer from '../../components/ContractExplorer';
 import ContractComparison from '../../components/ContractComparison';
 import SearchAndFilter from '../../components/SearchAndFilter';
 import AlertsSystem from '../../components/AlertsSystem';
 import RiskScoringEngine from '../../components/RiskScoringEngine';
+import { contractService } from '../../services/contractService';
+import { UserLens } from '../../types/contract';
 
 type UserRole = 'legal' | 'finance' | 'operations' | 'management';
 

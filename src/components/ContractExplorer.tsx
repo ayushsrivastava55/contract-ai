@@ -190,9 +190,10 @@ export default function ContractExplorer() {
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+              disabled={uploading}
+              className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Select Files
+              {uploading ? 'Uploading...' : 'Select Files'}
             </button>
             <input
               ref={fileInputRef}
@@ -211,71 +212,120 @@ export default function ContractExplorer() {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Contract Portfolio</h2>
           <div className="text-sm text-gray-500">
-            {contracts.length} contracts • {contracts.filter(c => c.status === 'analyzed').length} analyzed
+            {contracts.length} contracts • {contracts.filter(c => c.status === 'completed').length} analyzed
           </div>
         </div>
 
         <div className="space-y-4">
-          {contracts.map((contract) => (
-            <div key={contract.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-2xl">📋</div>
-                    <div>
-                      <h3 className="font-medium text-gray-900">{contract.name}</h3>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
-                        <span>Type: {contract.type}</span>
-                        <span>Size: {contract.size}</span>
-                        <span>Uploaded: {contract.uploadDate}</span>
+          {contracts.map((contract) => {
+            const riskAssessment = riskAssessments.get(contract.id);
+            return (
+              <div key={contract.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3">
+                      <div className="text-2xl">{getContractTypeIcon(contract.type)}</div>
+                      <div>
+                        <h3 className="font-medium text-gray-900">{contract.name}</h3>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                          <span>Type: {contract.type}</span>
+                          <span>Size: {formatFileSize(contract.fileSize)}</span>
+                          <span>Uploaded: {formatDate(contract.uploadDate)}</span>
+                          {contract.totalPages > 0 && <span>Pages: {contract.totalPages}</span>}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center space-x-4">
-                  {/* Status */}
-                  <div className="flex items-center space-x-2">
-                    {contract.status === 'processing' && (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-sm text-yellow-600">Processing...</span>
-                      </div>
-                    )}
-                    {contract.status === 'analyzed' && contract.riskScore && (
-                      <div className="flex items-center space-x-3">
-                        <div className={`px-3 py-1 rounded-full text-sm font-medium ${getRiskColor(contract.riskScore)}`}>
-                          {getRiskLabel(contract.riskScore)} Risk ({contract.riskScore})
+                  <div className="flex items-center space-x-4">
+                    {/* Status and Progress */}
+                    <div className="flex items-center space-x-2">
+                      {(contract.status === 'uploading' || contract.status === 'parsing' || contract.status === 'analyzing') && (
+                        <div className="flex items-center space-x-2">
+                          {contract.status === 'uploading' && (
+                            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                          )}
+                          {contract.status === 'parsing' && (
+                            <div className="w-4 h-4 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                          )}
+                          {contract.status === 'analyzing' && (
+                            <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                          )}
+                          <div className="text-center">
+                            <span className={`text-sm font-medium ${getStatusColor(contract.status)}`}>
+                              {getStatusIcon(contract.status)} {contract.status.charAt(0).toUpperCase() + contract.status.slice(1)}
+                            </span>
+                            {contract.status === 'parsing' && (
+                              <div className="text-xs text-gray-500">{contract.parsingProgress}% parsed</div>
+                            )}
+                            {contract.status === 'analyzing' && (
+                              <div className="text-xs text-gray-500">{contract.analysisProgress}% analyzed</div>
+                            )}
+                          </div>
                         </div>
-                        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                          View Analysis
-                        </button>
-                      </div>
-                    )}
-                    {contract.status === 'error' && (
-                      <span className="text-sm text-red-600">Processing Error</span>
-                    )}
-                  </div>
+                      )}
 
-                  {/* Actions */}
-                  <div className="flex space-x-2">
-                    <button className="p-2 text-gray-400 hover:text-gray-600">
-                      <span className="sr-only">Download</span>
-                      ⬇️
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600">
-                      <span className="sr-only">Share</span>
-                      🔗
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-red-600">
-                      <span className="sr-only">Delete</span>
-                      🗑️
-                    </button>
+                      {contract.status === 'completed' && riskAssessment && (
+                        <div className="flex items-center space-x-3">
+                          <div className={`px-3 py-1 rounded-full text-sm font-medium ${getRiskColor(riskAssessment.overallScore)}`}>
+                            {getRiskLabel(riskAssessment.overallScore)} Risk ({riskAssessment.overallScore})
+                          </div>
+                          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            View Analysis
+                          </button>
+                        </div>
+                      )}
+
+                      {contract.status === 'error' && (
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">❌</span>
+                          <span className="text-sm text-red-600">Processing Failed</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex space-x-2">
+                      {contract.status === 'completed' && (
+                        <>
+                          <button
+                            className="p-2 text-gray-400 hover:text-blue-600"
+                            title="View Contract Details"
+                          >
+                            👁️
+                          </button>
+                          <button
+                            className="p-2 text-gray-400 hover:text-green-600"
+                            title="Download Analysis"
+                          >
+                            ⬇️
+                          </button>
+                          <button
+                            className="p-2 text-gray-400 hover:text-purple-600"
+                            title="AI Insights"
+                          >
+                            🧠
+                          </button>
+                        </>
+                      )}
+                      <button
+                        className="p-2 text-gray-400 hover:text-gray-600"
+                        title="Share"
+                      >
+                        🔗
+                      </button>
+                      <button
+                        className="p-2 text-gray-400 hover:text-red-600"
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {contracts.length === 0 && (
@@ -287,13 +337,13 @@ export default function ContractExplorer() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow-md p-4">
           <div className="flex items-center">
             <div className="text-2xl mr-3">📊</div>
             <div>
               <div className="text-2xl font-bold text-gray-900">
-                {contracts.filter(c => c.status === 'analyzed').length}
+                {contracts.filter(c => c.status === 'completed').length}
               </div>
               <div className="text-sm text-gray-500">Analyzed Contracts</div>
             </div>
@@ -305,9 +355,9 @@ export default function ContractExplorer() {
             <div className="text-2xl mr-3">⚠️</div>
             <div>
               <div className="text-2xl font-bold text-red-600">
-                {contracts.filter(c => c.riskScore && c.riskScore >= 70).length}
+                {Array.from(riskAssessments.values()).filter(r => r.overallScore >= 75).length}
               </div>
-              <div className="text-sm text-gray-500">High Risk Contracts</div>
+              <div className="text-sm text-gray-500">Critical Risk</div>
             </div>
           </div>
         </div>
@@ -317,9 +367,19 @@ export default function ContractExplorer() {
             <div className="text-2xl mr-3">🔄</div>
             <div>
               <div className="text-2xl font-bold text-yellow-600">
-                {contracts.filter(c => c.status === 'processing').length}
+                {contracts.filter(c => c.status === 'parsing' || c.status === 'analyzing' || c.status === 'uploading').length}
               </div>
               <div className="text-sm text-gray-500">Processing</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-4">
+          <div className="flex items-center">
+            <div className="text-2xl mr-3">💰</div>
+            <div>
+              <div className="text-2xl font-bold text-green-600">₹2.8K Cr</div>
+              <div className="text-sm text-gray-500">Total Value</div>
             </div>
           </div>
         </div>
