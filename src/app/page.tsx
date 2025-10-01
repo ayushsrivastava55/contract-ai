@@ -248,12 +248,12 @@ export default function Home() {
             Join leading infrastructure companies in India using AI to accelerate contract performance
           </p>
           <div className="space-x-4">
-            <button className="bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            <a href="/dashboard" className="inline-block bg-white text-yellow-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
               Get Started
-            </button>
-            <button className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-yellow-600 transition-colors">
+            </a>
+            <a href="/dashboard" className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-yellow-600 transition-colors">
               Request Demo
-            </button>
+            </a>
           </div>
         </div>
       </div>

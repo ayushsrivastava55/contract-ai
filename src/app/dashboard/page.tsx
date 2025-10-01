@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import ContractExplorer from '../../components/ContractExplorer';
 import ContractComparison from '../../components/ContractComparison';
+import SearchAndFilter from '../../components/SearchAndFilter';
+import AlertsSystem from '../../components/AlertsSystem';
+import RiskScoringEngine from '../../components/RiskScoringEngine';
 
 type UserRole = 'legal' | 'finance' | 'operations' | 'management';
 
@@ -355,6 +358,30 @@ export default function Dashboard() {
                 }`}
               >
                 Compare Contracts
+              </button>
+              <button
+                onClick={() => setActiveView('search')}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeView === 'search' ? 'bg-yellow-100 text-yellow-800' : 'text-gray-700 hover:text-gray-900'
+                }`}
+              >
+                Search & Filter
+              </button>
+              <button
+                onClick={() => setActiveView('alerts')}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeView === 'alerts' ? 'bg-yellow-100 text-yellow-800' : 'text-gray-700 hover:text-gray-900'
+                }`}
+              >
+                Alerts
+              </button>
+              <button
+                onClick={() => setActiveView('risk')}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeView === 'risk' ? 'bg-yellow-100 text-yellow-800' : 'text-gray-700 hover:text-gray-900'
+                }`}
+              >
+                Risk Analysis
               </button>
             </nav>
           </div>
