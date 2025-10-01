@@ -1,49 +1,35 @@
 'use client';
 
-import { useState, useRef } from 'react';
-
-interface Contract {
-  id: string;
-  name: string;
-  uploadDate: string;
-  size: string;
-  status: 'processing' | 'analyzed' | 'error';
-  riskScore?: number;
-  type: string;
-}
+import { useState, useRef, useEffect } from 'react';
+import { ContractMetadata, RiskAssessment } from '../types/contract';
+import { contractService } from '../services/contractService';
 
 export default function ContractExplorer() {
-  const [contracts, setContracts] = useState<Contract[]>([
-    {
-      id: '1',
-      name: 'Metro Rail Project Agreement - Phase 1',
-      uploadDate: '2024-09-15',
-      size: '2.3 MB',
-      status: 'analyzed',
-      riskScore: 65,
-      type: 'Infrastructure'
-    },
-    {
-      id: '2',
-      name: 'Solar Energy Plant Construction Contract',
-      uploadDate: '2024-09-10',
-      size: '1.8 MB',
-      status: 'analyzed',
-      riskScore: 45,
-      type: 'Renewable Energy'
-    },
-    {
-      id: '3',
-      name: 'Highway Development BOT Agreement',
-      uploadDate: '2024-09-08',
-      size: '3.1 MB',
-      status: 'processing',
-      type: 'Transportation'
-    }
-  ]);
+  const [contracts, setContracts] = useState<ContractMetadata[]>([]);
+  const [riskAssessments, setRiskAssessments] = useState<Map<string, RiskAssessment>>(new Map());
 
   const [dragActive, setDragActive] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    loadContracts();
+  }, []);
+
+  const loadContracts = () => {
+    const contractList = contractService.getContracts();
+    setContracts(contractList);
+
+    // Load risk assessments for each contract
+    const riskMap = new Map<string, RiskAssessment>();
+    contractList.forEach(contract => {
+      const risk = contractService.getRiskAssessment(contract.id);
+      if (risk) {
+        riskMap.set(contract.id, risk);
+      }
+    });
+    setRiskAssessments(riskMap);
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -65,39 +51,115 @@ export default function ContractExplorer() {
     }
   };
 
-  const handleFiles = (files: FileList) => {
-    Array.from(files).forEach(file => {
-      const newContract: Contract = {
-        id: Date.now().toString(),
-        name: file.name,
-        uploadDate: new Date().toISOString().split('T')[0],
-        size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
-        status: 'processing',
-        type: 'Unknown'
-      };
-      setContracts(prev => [newContract, ...prev]);
+  const handleFiles = async (files: FileList) => {
+    setUploading(true);
 
-      // Simulate processing
-      setTimeout(() => {
-        setContracts(prev => prev.map(contract =>
-          contract.id === newContract.id
-            ? { ...contract, status: 'analyzed' as const, riskScore: Math.floor(Math.random() * 100) }
-            : contract
-        ));
-      }, 3000);
-    });
+    for (const file of Array.from(files)) {
+      try {
+        // Determine contract type based on filename or let user select
+        const contractType = determineContractType(file.name);
+
+        const contractId = await contractService.uploadContract(file, {
+          type: contractType
+        });
+
+        // Poll for updates until processing is complete
+        const pollInterval = setInterval(() => {
+          const updatedContract = contractService.getContract(contractId);
+          if (updatedContract) {
+            setContracts(prev => {
+              const existing = prev.find(c => c.id === contractId);
+              if (existing) {
+                return prev.map(c => c.id === contractId ? updatedContract : c);
+              } else {
+                return [updatedContract, ...prev];
+              }
+            });
+
+            if (updatedContract.status === 'completed') {
+              // Load risk assessment
+              const risk = contractService.getRiskAssessment(contractId);
+              if (risk) {
+                setRiskAssessments(prev => new Map(prev.set(contractId, risk)));
+              }
+              clearInterval(pollInterval);
+            } else if (updatedContract.status === 'error') {
+              clearInterval(pollInterval);
+            }
+          }
+        }, 1000);
+
+      } catch (error) {
+        console.error('Failed to upload contract:', error);
+      }
+    }
+
+    setUploading(false);
+  };
+
+  const determineContractType = (filename: string): ContractMetadata['type'] => {
+    const name = filename.toLowerCase();
+    if (name.includes('metro') || name.includes('rail')) return 'metro';
+    if (name.includes('solar') || name.includes('wind')) return 'renewables';
+    if (name.includes('highway') || name.includes('road')) return 'roadways';
+    if (name.includes('airport')) return 'airport';
+    if (name.includes('transmission') || name.includes('power')) return 'transmission';
+    return 'infrastructure';
   };
 
   const getRiskColor = (score: number) => {
-    if (score >= 70) return 'text-red-600 bg-red-100';
-    if (score >= 40) return 'text-yellow-600 bg-yellow-100';
+    if (score >= 75) return 'text-red-600 bg-red-100';
+    if (score >= 50) return 'text-orange-600 bg-orange-100';
+    if (score >= 25) return 'text-yellow-600 bg-yellow-100';
     return 'text-green-600 bg-green-100';
   };
 
   const getRiskLabel = (score: number) => {
-    if (score >= 70) return 'High';
-    if (score >= 40) return 'Medium';
+    if (score >= 75) return 'Critical';
+    if (score >= 50) return 'High';
+    if (score >= 25) return 'Medium';
     return 'Low';
+  };
+
+  const getStatusColor = (status: ContractMetadata['status']) => {
+    switch (status) {
+      case 'completed': return 'text-green-600';
+      case 'uploading': return 'text-blue-600';
+      case 'parsing': return 'text-yellow-600';
+      case 'analyzing': return 'text-purple-600';
+      case 'error': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getStatusIcon = (status: ContractMetadata['status']) => {
+    switch (status) {
+      case 'completed': return '✅';
+      case 'uploading': return '⬆️';
+      case 'parsing': return '📄';
+      case 'analyzing': return '🧠';
+      case 'error': return '❌';
+      default: return '⏳';
+    }
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  };
+
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const getContractTypeIcon = (type: ContractMetadata['type']): string => {
+    switch (type) {
+      case 'metro': return '🚇';
+      case 'roadways': return '🛣️';
+      case 'airport': return '✈️';
+      case 'renewables': return '🌱';
+      case 'transmission': return '⚡';
+      default: return '🏗️';
+    }
   };
 
   return (
