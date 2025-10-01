@@ -86,15 +86,15 @@ export default function Home() {
               </h1>
             </div>
             <nav className="flex space-x-6">
-              <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+              <a href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                 Dashboard
-              </button>
-              <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+              </a>
+              <a href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                 Contracts
-              </button>
-              <button className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+              </a>
+              <a href="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
                 Analytics
-              </button>
+              </a>
             </nav>
           </div>
         </div>
@@ -172,17 +172,17 @@ export default function Home() {
                   {activeFeature === 'explorer' && (
                     <div>
                       <p className="text-gray-600 mb-4">Upload and analyze your contracts with AI-powered parsing.</p>
-                      <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
+                      <a href="/dashboard" className="inline-block bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors">
                         Upload Contract
-                      </button>
+                      </a>
                     </div>
                   )}
                   {activeFeature === 'comparison' && (
                     <div>
                       <p className="text-gray-600 mb-4">Side-by-side contract comparison with difference highlighting.</p>
-                      <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                      <a href="/dashboard" className="inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
                         Compare Contracts
-                      </button>
+                      </a>
                     </div>
                   )}
                   {activeFeature === 'search' && (
